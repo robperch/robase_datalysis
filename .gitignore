@@ -1,0 +1,27 @@
+## GIT IGNORE
+
+
+
+
+
+## Macos
+.DS_Store
+
+## Jupyter
+.ipynb_checkpoints/
+
+## Pycharm
+.idea/
+
+## Vim
+*swp
+
+## Credentials
+credentials.yaml
+
+## Python
+__pycache__/
+
+## Dump files
+dump
+
