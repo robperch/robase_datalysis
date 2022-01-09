@@ -43,7 +43,7 @@ creds_file_path = os.path.join(package_dir, "config", "local", "credentials.yaml
 "-------------- Data files base path --------------"
 
 ## Data base file location
-# data_dir_path = os.path.join(package_dir, "data")
+data_dir_path = os.path.join(package_dir, "data")
 
 
 
