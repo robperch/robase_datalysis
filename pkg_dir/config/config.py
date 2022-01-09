@@ -1,4 +1,4 @@
-## CONFIG FILE TEMPLATE
+## CONFIGURATION FILE TO MANAGE PROJECT PATHS
 
 
 
@@ -10,7 +10,6 @@
 
 
 ## Standard library imports
-
 import os
 
 
