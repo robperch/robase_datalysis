@@ -9,23 +9,16 @@
 "----------------------------------------------------------------------------------------------------------------------"
 
 
-## Standard library imports
-
+"--------------- Standard library imports ---------------"
 import yaml
-
 import json
-
 import os
 
-
-## Third party imports
-
+"--------------- Third party imports ---------------"
 import pandas as pd
-
 import unidecode
 
-
-## Local application imports
+"--------------- Local application imports ---------------"
 
 
 
@@ -158,7 +151,7 @@ def create_directory_if_nonexistent(dir_path, dir_name):
 "----------------------------------------------------------------------------------------------------------------------"
 
 
-"--------------- Data schema based functions ---------------"
+"--------------- Data schema based unitary functions ---------------"
 
 
 ## Renaming columns based on a specified data schema
@@ -198,7 +191,7 @@ def drop_irrelevant_columns_with_data_schema(dfx, data_schema):
 
     ## Creating a list of the relevant columns
     rc = [
-        col
+        data_schema[col]["clean_col_name"]
         for col in data_schema
         if data_schema[col]["relevant"]
     ]
@@ -211,7 +204,7 @@ def drop_irrelevant_columns_with_data_schema(dfx, data_schema):
 
 
 
-## Formatting the columns data types based on a specified data schema
+## Formatting the columns' data types based on a specified data schema
 def format_data_types_with_data_schema(dfx, data_schema):
     """
     Formatting the columns data types based on a specified data schema
@@ -226,7 +219,7 @@ def format_data_types_with_data_schema(dfx, data_schema):
 
     ### Strings
     rc = [
-        col
+        data_schema[col]["clean_col_name"]
         for col in data_schema
         if data_schema[col]["relevant"]
            and data_schema[col]["data_type"] == "str"
@@ -238,7 +231,7 @@ def format_data_types_with_data_schema(dfx, data_schema):
 
     ### Datetimes
     rc = [
-        col
+        data_schema[col]["clean_col_name"]
         for col in data_schema
         if data_schema[col]["relevant"]
            and data_schema[col]["data_type"] == "datetime"
@@ -249,7 +242,7 @@ def format_data_types_with_data_schema(dfx, data_schema):
 
     ### Integers
     rc = [
-        col
+        data_schema[col]["clean_col_name"]
         for col in data_schema
         if data_schema[col]["relevant"]
            and data_schema[col]["data_type"] == "int"
@@ -260,7 +253,7 @@ def format_data_types_with_data_schema(dfx, data_schema):
 
     ### Floats
     rc = [
-        col
+        data_schema[col]["clean_col_name"]
         for col in data_schema
         if data_schema[col]["relevant"]
            and data_schema[col]["data_type"] == "float"
@@ -284,16 +277,47 @@ def map_row_values_with_data_schema(dfx, data_schema):
     """
 
 
-    ## Creating list of all the columns that have value mappings
-    mapping_columns = [
-        data_schema[col]["clean_col_name"]
+    ## Creating dictionary with the clean column name and the mapping that will be used
+    mapping_reference = {
+        data_schema[col]["clean_col_name"]: data_schema[col]["values_map"]
         for col in data_schema
         if "values_map" in data_schema[col]
-    ]
+    }
 
-    ## Mapping the values
-    for col in mapping_columns:
-        dfx[col] = dfx[col].map(data_schema[col]["values_map"]).fillna(dfx[col])
+    ## Mapping values according to reference
+    for col in mapping_reference:
+        dfx[col] = dfx[col].map(mapping_reference[col]).fillna(dfx[col])
+
+
+    return dfx
+
+
+
+"--------------- Data schema based compounded functions ---------------"
+
+
+## Group of data wrangling functions that are based on the data schema
+def data_wrangling_schema_functions(dfx, data_schema):
+    """
+    Group of data wrangling functions that are based on the data schema
+
+    :param dfx: (dataframe) raw data previous to the wrangling process
+    :param data_schema: (dictionary) data schema containing the parameters for the data wrangling
+    :return dfx: (dataframe) data processed through the data wrangling functions
+    """
+
+
+    ## Renaming columns based on a specified data schema
+    dfx = rename_columns_with_data_schema(dfx, data_schema)
+
+    ## Eliminating irrelevant columns based on specified data schema
+    dfx = drop_irrelevant_columns_with_data_schema(dfx, data_schema)
+
+    ## Formatting the columns data types based on a specified data schema
+    dfx = format_data_types_with_data_schema(dfx, data_schema)
+
+    ## Mapping row values with information specified on the data schema
+    dfx = map_row_values_with_data_schema(dfx, data_schema)
 
 
     return dfx
@@ -304,6 +328,6 @@ def map_row_values_with_data_schema(dfx, data_schema):
 
 "----------------------------------------------------------------------------------------------------------------------"
 "----------------------------------------------------------------------------------------------------------------------"
-## END OF FILE ##
+############### END OF FILE ############################################################################################
 "----------------------------------------------------------------------------------------------------------------------"
 "----------------------------------------------------------------------------------------------------------------------"

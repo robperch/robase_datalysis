@@ -9,12 +9,13 @@
 "----------------------------------------------------------------------------------------------------------------------"
 
 
-## Standard library imports
+"--- Standard library imports ---"
 
 
-## Third party imports
+"--- Third party imports ---"
 
 import pandas as pd
+from openpyxl import load_workbook
 
 
 ## Local application imports
@@ -147,6 +148,26 @@ def generate_save_excel(dfx):
 
     return
 
+
+
+## Function to read obtain the sheet/tab names in the file
+def get_sheet_names_xlsx(file_path):
+    """
+    Function to read obtain the sheet/tab names in the file
+
+    :param file_path (string): path to excel file that will be loaded
+    :return sheet_names (list): list will all the names of the excel file sheets
+    """
+
+
+    ## Loading workbook
+    wb = load_workbook(file_path, read_only=True, keep_links=False)
+
+    ## Obtainig the sheet names
+    sheet_names = wb.sheetnames
+
+
+    return sheet_names
 
 
 

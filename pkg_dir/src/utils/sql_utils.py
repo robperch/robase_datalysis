@@ -80,6 +80,7 @@ def get_db_crds(db_crds):
     ## Selecting the right credentials
     db_crds_data = crds[db_crds]
 
+
     return db_crds_data
 
 
@@ -100,12 +101,17 @@ def database_conection(db_crds):
 
     ## Obtaining the connection object according to the db_crds
 
-    #### PostgreSQL
-    if "postgre" in db_crds:
+    ### Punto Clínico's database (production)
+    if db_crds == "pc_db_prod":
+        conn_string = "host=" + db_creds["host"] + " dbname=" + db_creds["dbname"] + " user=" + db_creds["user"] + " password=" + db_creds["psw"]
+        conn = psycopg2.connect(conn_string)
+
+    ### Punto Clínico's database (local backups)
+    elif db_crds == "pc_db_backup":
         conn_string = "dbname=" + db_creds["dbname"] + " user=" + db_creds["user"] + " password=" + db_creds["psw"]
         conn = psycopg2.connect(conn_string)
 
-    #### MySQL
+    ### MySQL
     elif "mysql" in db_crds:
 
         try:
@@ -122,7 +128,7 @@ def database_conection(db_crds):
             else:
                 print(err)
 
-    #### Not found
+    ### Not found
     else:
         raise NameError("No protocol defined for the RDBMS selected")
 
