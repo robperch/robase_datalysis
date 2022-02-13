@@ -20,8 +20,18 @@ import pandas as pd
 
 
 ## Local application imports
-from pkg_dir.config import *
-from pkg_dir.src.utils import *
+
+from pkg_dir.config.config import (
+
+    creds_file_path as crds_loc,
+
+)
+
+from pkg_dir.src.utils.general_utils import (
+
+    read_yaml,
+
+)
 
 
 
@@ -73,7 +83,7 @@ def get_notion_db_json(db_id):
 
 
     ## Reading credentials from yaml file
-    yaml_file = read_yaml(creds_file_path)
+    yaml_file = read_yaml(crds_loc)
     notion_version = yaml_file["notion_api"]["notion_version"]
     db_api_url = yaml_file["notion_api"]["db_api_url"]
     api_key = yaml_file["notion_api"]["api_key"]
