@@ -147,7 +147,7 @@ def create_directory_if_nonexistent(dir_path, dir_name):
 
 
 "----------------------------------------------------------------------------------------------------------------------"
-############################## Data wrangling functions ################################################################
+############################## Data schema based wrangling functions ###################################################
 "----------------------------------------------------------------------------------------------------------------------"
 
 
@@ -318,6 +318,49 @@ def data_wrangling_schema_functions(dfx, data_schema):
 
     ## Mapping row values with information specified on the data schema
     dfx = map_row_values_with_data_schema(dfx, data_schema)
+
+
+    return dfx
+
+
+
+
+
+"----------------------------------------------------------------------------------------------------------------------"
+############################## Useful general data wrangling functions #################################################
+"----------------------------------------------------------------------------------------------------------------------"
+
+
+"--------------- Useful general data wrangling unitary functions ---------------"
+
+
+## Adding column with a distinction between the first and second half of the month (quincena)
+def add_quincena_column(dfx, date_col_name):
+    """
+    Adding column with a distinction between the first and second half of the month (quincena)
+
+    :param dfx: (dataframe) df without the quincena column added
+    :param date_col_name: (string) name of the column that will be used as reference the create the new quincena column
+    :return dfx: (dataframe) df with a column indicating the half of the month with the following format: %y-%m-qx (where 'x' stands for 1 or 2, depending on the month's half)
+    """
+
+
+    ## Creating support column to identify the half of the month
+    dfx.insert(
+        dfx.columns.to_list().index(date_col_name) + 1,
+        'support_col_month_half',
+        dfx[date_col_name].apply(lambda x: '1' if int(x.strftime('%d')) <= 15 else '2')
+    )
+
+    ## Creating quincena column
+    dfx.insert(
+        dfx.columns.to_list().index(date_col_name) + 1,
+        'quincena',
+        dfx[date_col_name].dt.strftime(date_format='%y-%m-q') + dfx['support_col_month_half']
+    )
+
+    ## Dropping support column
+    dfx.drop(['support_col_month_half'], axis=1, inplace=True)
 
 
     return dfx
