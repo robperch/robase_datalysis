@@ -9,23 +9,16 @@
 "----------------------------------------------------------------------------------------------------------------------"
 
 
-## Standard library imports
+"--------------- Standard library imports ---------------"
 
-
-## Third party imports
-
+"--------------- Third party imports ---------------"
 import psycopg2
-
 import mysql.connector
 from mysql.connector import errorcode
-
 import pandas as pd
 
-
-## Local application imports
-
+"--------------- Local application imports ---------------"
 from pkg_dir.config.config import creds_file_path as crds_loc
-
 from pkg_dir.src.utils.general_utils import read_yaml
 
 
@@ -85,10 +78,10 @@ def get_db_crds(db_crds):
 
 
 
-## PostgreSQL - obtain connection object
+## Obtain the connection object for the sql database
 def database_conection(db_crds):
     """
-    PostgreSQL obtain connection object
+    Obtain the connection object for the sql database
 
     :param db_crds (string): Specification of the database the user wants to connect to
     :return conn (rdbms connection): connection to postgre database
