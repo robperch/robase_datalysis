@@ -13,12 +13,15 @@
 import yaml
 import json
 import os
+from datetime import datetime
+import dateutil
 
 "--------------- Third party imports ---------------"
 import pandas as pd
 import unidecode
 
 "--------------- Local application imports ---------------"
+from pkg_dir.config import *
 
 
 
@@ -141,6 +144,40 @@ def create_directory_if_nonexistent(dir_path, dir_name):
 
 
     return
+
+
+
+## Generate date string (format: %Y-%m-%d) for a time period based on an initial month and a month delta
+def generate_month_based_date_string(delta_months, current_month=utc_tz.localize(datetime.utcnow()).astimezone(mexico_tz).strftime('%Y-%m')):
+    """
+    Generate date string (format: %Y-%m-%d) for a time period based on an initial month and a month delta
+
+    :param current_month: (string) date as a string (format: %Y-%m) that represents the end of the current month
+    :param delta_months: (int) number of months considered for the time delta
+    :return date_string: (str) date string covering time period in the format %Y-%m-%d_to_%Y-%m-%d
+    """
+
+
+    ## Base time considered for the time delta
+    if delta_months == 0:
+        t_base = datetime.strptime(current_month, '%Y-%m')
+    else:
+        t_base = datetime.strptime(current_month, '%Y-%m') + dateutil.relativedelta.relativedelta(months=1, day=1)
+
+    ## Time after applying the time delta
+    if delta_months == 0:
+        t_adj = t_base + dateutil.relativedelta.relativedelta(months=1)
+    else:
+        t_adj = t_base + dateutil.relativedelta.relativedelta(months=delta_months)
+
+    ## Creating date string with resulting times
+    if t_base < t_adj:
+        date_string = datetime.strftime(t_base, "%Y-%m-%d") + "_to_" + datetime.strftime(t_adj, "%Y-%m-%d")
+    elif t_base > t_adj:
+        date_string = datetime.strftime(t_adj, "%Y-%m-%d") + "_to_" + datetime.strftime(t_base, "%Y-%m-%d")
+
+
+    return date_string
 
 
 
