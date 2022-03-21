@@ -12,9 +12,8 @@
 ## Standard library imports
 import os
 
-
 ## Third party imports
-
+from pytz import timezone
 
 ## Local application imports
 
@@ -75,6 +74,19 @@ word_translation = {
     },
 
 }
+
+
+
+
+
+"----------------------------------------------------------------------------------------------------------------------"
+############################## Time zone parameters ####################################################################
+"----------------------------------------------------------------------------------------------------------------------"
+
+
+## Relevant time zones
+utc_tz = timezone('UTC')
+mexico_tz = timezone('Mexico/General')
 
 
 
