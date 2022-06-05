@@ -31,18 +31,18 @@ from pkg_dir.src.utils.general_utils import read_yaml
 
 
 ## Converting date string into a dictionary suitable for the sql parameters
-def datestring_to_sql_parameter(datestring):
+def datestring_to_sql_parameter(date_string):
     """
     Converting date string into a dictionary suitable for the sql parameters
 
-    :param datestring (string): string that contain a start and end date in the format %Y%m%d_to_%Y%m%d
+    :param date_string (string): string that contain a start and end date in the format %Y%m%d_to_%Y%m%d
     :return date_sql_param (dict): dictionary with the date parameters defined to conduct the sql query
     """
 
 
     ## Dictionary comprehension to create dictionary parameter
     date_sql_param = {
-        "$" + str(i + 1): "'" + datestring.split(sep="_to_")[i] + "'"
+        "$" + str(i + 1): "'" + date_string.split(sep="_to_")[i] + "'"
         for i in range(0, 1 + 1)
     }
 
@@ -163,18 +163,22 @@ def execute_sql_script(db_crds, sql_files_path, sql_script, sql_params):
     for var in sql_params:
         sql_script = sql_script.replace(var, sql_params[var])
 
-    ## Executing sql file
-    cur.execute(sql_script)
+    # ## Executing sql file
+    # cur.execute(sql_script)
 
-    ## Obtaining results from script execution
-    tuples = cur.fetchall()
+    ## Executing file with pandas library
+    dfx = pd.read_sql_query(sql_script, conn)
+
+    # Obtaining results from script execution
+    # tuples = cur.fetchall()
 
     ## Closing cursor and connection
     cur.close()
     conn.close()
 
 
-    return tuples
+    # return tuples
+    return dfx
 
 
 
@@ -192,13 +196,15 @@ def sql_to_df(db_crds, sql_files_path, sql_script, sql_params):
 
 
     ## Obtaining query results as tuples
-    tuples = execute_sql_script(db_crds, sql_files_path, sql_script, sql_params["params"])
+    # tuples = execute_sql_script(db_crds, sql_files_path, sql_script, sql_params["params"])
+    dfx = execute_sql_script(db_crds, sql_files_path, sql_script, sql_params["params"])
 
     ## Converting tuples into dataframe
-    dfx = pd.DataFrame(tuples)
+    # dfx = pd.DataFrame(tuples)
 
     ## Naming columns based on guide
-    dfx.rename(columns=sql_params["colnames"], inplace=True)
+    if 'colnames' in sql_params:
+        dfx.rename(columns=sql_params["colnames"], inplace=True)
 
 
     return dfx
