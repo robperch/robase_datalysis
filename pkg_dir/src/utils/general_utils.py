@@ -147,6 +147,40 @@ def create_directory_if_nonexistent(dir_path, dir_name):
 
 
 
+## Creating date string from current date back a specified number of days
+def create_date_string(delta_days, day_adjust):
+    """
+    Creating date string from current date back a specified number of days
+
+    :param delta_days: (int) number of days to back in time to build historic information
+    :param day_adjust: (int) number of days added to the initial time (now)
+    :return date_string: (str) date string covering time period in the format %Y-%m-%d_to_%Y-%m-%d
+    """
+
+
+    ## Final time, initial time and time delta
+
+    ### Retrospective analyis
+    if delta_days < 0:
+        t1 = utc_tz.localize(datetime.utcnow()).astimezone(mexico_tz) + dateutil.relativedelta.relativedelta(days=day_adjust) ## Adding one day to ensure that the current day is included in the extraction.
+        td = dateutil.relativedelta.relativedelta(days=delta_days)
+        t0 = t1 + td
+
+    ### Prospective analysis
+    if delta_days > 0:
+        t0 = utc_tz.localize(datetime.utcnow()).astimezone(mexico_tz) + dateutil.relativedelta.relativedelta(days=day_adjust) ## Adding one day to avoid counting the current day
+        td = dateutil.relativedelta.relativedelta(days=delta_days)
+        t1 = t0 + td
+
+
+    ## Date string with suitable format for sql query
+    date_string = datetime.strftime(t0, "%Y-%m-%d") + "_to_" + datetime.strftime(t1, "%Y-%m-%d")
+
+
+    return date_string
+
+
+
 ## Generate date string (format: %Y-%m-%d) for a time period based on an initial month and a month delta
 def generate_month_based_date_string(delta_months, current_month=utc_tz.localize(datetime.utcnow()).astimezone(mexico_tz).strftime('%Y-%m')):
     """
@@ -169,6 +203,40 @@ def generate_month_based_date_string(delta_months, current_month=utc_tz.localize
         t_adj = t_base + dateutil.relativedelta.relativedelta(months=1)
     else:
         t_adj = t_base + dateutil.relativedelta.relativedelta(months=delta_months)
+
+    ## Creating date string with resulting times
+    if t_base < t_adj:
+        date_string = datetime.strftime(t_base, "%Y-%m-%d") + "_to_" + datetime.strftime(t_adj, "%Y-%m-%d")
+    elif t_base > t_adj:
+        date_string = datetime.strftime(t_adj, "%Y-%m-%d") + "_to_" + datetime.strftime(t_base, "%Y-%m-%d")
+
+
+    return date_string
+
+
+
+## Generate date string (format: %Y-%m-%d) for a time period based on an initial year and a year delta
+def generate_year_based_date_string(delta_years, current_year=utc_tz.localize(datetime.utcnow()).astimezone(mexico_tz).strftime('%Y')):
+    """
+    Generate date string (format: %Y-%m-%d) for a time period based on an initial year and a year delta
+
+    :param current_year: (string) date as a string (format: %Y) that represents the end of the current month
+    :param delta_years: (int) number of years considered for the time delta
+    :return date_string: (str) date string covering time period in the format %Y-%m-%d_to_%Y-%m-%d
+    """
+
+
+    ## Base time considered for the time delta
+    if delta_years == 0:
+        t_base = datetime.strptime(current_year, '%Y')
+    else:
+        t_base = datetime.strptime(current_year, '%Y') + dateutil.relativedelta.relativedelta(years=1, day=1)
+
+    ## Time after applying the time delta
+    if delta_years == 0:
+        t_adj = t_base + dateutil.relativedelta.relativedelta(years=1)
+    else:
+        t_adj = t_base + dateutil.relativedelta.relativedelta(years=delta_years)
 
     ## Creating date string with resulting times
     if t_base < t_adj:
@@ -263,7 +331,8 @@ def format_data_types_with_data_schema(dfx, data_schema):
     ]
     for col in rc:
         dfx[col] = dfx[col].astype("str")
-        dfx[col] = dfx[col].apply(lambda x: unidecode.unidecode(x.upper()))
+        # dfx[col] = dfx[col].apply(lambda x: unidecode.unidecode(x.upper()))
+        dfx[col] = dfx[col].str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf8')
 
 
     ### Datetimes
