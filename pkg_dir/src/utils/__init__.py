@@ -24,9 +24,9 @@ from .general_utils import (
     drop_irrelevant_columns_with_data_schema,
     format_data_types_with_data_schema,
     map_row_values_with_data_schema,
+    data_wrangling_schema_functions,
 
 )
-
 
 ## Notion utils
 from .notion_utils import (
@@ -50,6 +50,19 @@ from .sql_utils import (
 ## Excel utils
 from .excel_utils import (
     excel_writer,
+)
+
+## AWS utils
+from .aws_utils import (
+
+    create_aws_session_from_local_yaml,
+
+    ## S3 utils
+    create_s3_client,
+    upload_file_to_s3,
+    list_objects_in_bucket_key,
+    read_s3_obj_to_variable,
+
 )
 
 

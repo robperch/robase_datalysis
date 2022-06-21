@@ -125,22 +125,21 @@ def read_json(file_path):
 
 
 ## Creating a directory if it doesn't already exists
-def create_directory_if_nonexistent(dir_path, dir_name):
+def create_directory_if_nonexistent(dir_path):
     """
     Creating a directory if it doesn't already exists
 
-    :param dir_path: (string) path to where the new directory will be located
-    :param dir_name: (string) name of the directory that will be created
+    :param dir_path: (string) path to the directory that will be checked
     :return None:
     """
 
 
     ## Concatenating dir path and dir name
-    dir_path_full = os.path.join(dir_path, dir_name)
+    # dir_path = os.path.join(dir_path, dir_name)
 
     ## Creating directory
-    if not os.path.exists(dir_path_full):
-        os.mkdir(dir_path_full)
+    if not os.path.exists(dir_path):
+        os.mkdir(dir_path)
 
 
     return
